@@ -1,11 +1,17 @@
 "use strict";
 
+const shipItAPI = require("../shipItApi");
+shipItAPI.shipProduct = jest.fn();
+
 const request = require("supertest");
 const app = require("../app");
 
-
 describe("POST /", function () {
   test("valid", async function () {
+    shipItAPI.shipProduct
+      .mockReturnValue(1234);
+    console.log("shipitAPI.shipProduct = ", shipItAPI.shipProduct);
+
     const resp = await request(app).post("/shipments").send({
       productId: 1000,
       name: "Test Tester",
@@ -13,10 +19,13 @@ describe("POST /", function () {
       zipcode: "12345-6789",
     });
 
-    expect(resp.body).toEqual({ shipped: expect.any(Number) });
+    expect(resp.body).toEqual({ shipped: 1234 });
   });
 
   test("error if invalid product id", async function () {
+    shipItAPI.shipProduct
+      .mockReturnValue(1234);
+
     const resp = await request(app).post("/shipments").send({
       productId: 999,
       name: "Test Tester",
@@ -30,6 +39,9 @@ describe("POST /", function () {
   });
 
   test("error if invalid zipcode", async function () {
+    shipItAPI.shipProduct
+      .mockReturnValue(1234);
+
     const resp = await request(app).post("/shipments").send({
       productId: 1000,
       name: "Test Tester",
@@ -43,6 +55,9 @@ describe("POST /", function () {
   });
 
   test("error if extra data provided", async function () {
+    shipItAPI.shipProduct
+      .mockReturnValue(1234);
+
     const resp = await request(app).post("/shipments").send({
       productId: 1000,
       name: "Test Tester",
